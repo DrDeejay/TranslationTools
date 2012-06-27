@@ -49,7 +49,7 @@ $query_languages = $smcFunc['db_query']('', '
 	{
 		if (!isset($languages[$lang['name']]))
 			$languages[$lang['name']] = array();
-		$languages[$lang['name']][] = $row;
+		$languages[$lang['name']][] = $lang;
 	}
 		
 	foreach ($languages as $key => $translators)
