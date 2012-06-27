@@ -64,3 +64,4 @@ echo '
 
 // And the footer
 template_footer();
+?>
