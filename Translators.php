@@ -31,11 +31,16 @@ echo '
 
 // Setup a query to load the languages
 $query_languages = $smcFunc['db_query']('', '
-		SELECT id_language, name
+		SELECT l.id_language, l.name, l.id_member, t.id_member, t.id_language, t.can_update, m.id_member, m.real_name
 			FROM language.languages
+			LEFT JOIN language.permission_languages AS t ON (l.id_member = t.id_member)
+			LEFT JOIN {db_prefix}members AS m ON (m.id_member = t.id_member)
+			WHERE t.can_update = {int:can_update}
 			ORDER BY name ASC
 	',
-	array()
+	array(
+		'can_update' => 1
+	)
 );
 
 	// Walk through the results
@@ -44,20 +49,6 @@ $query_languages = $smcFunc['db_query']('', '
 		// Show the name of the language.
 		echo '
 				<br /><strong>' . $lang['name'] . '</strong><br />';
-
-		// Now get the translators from the database
-		$query_translators = $smcFunc['db_query']('', '
-				SELECT t.id_member, t.id_language, t.can_update, m.id_member, m.real_name
-					FROM language.permission_languages AS t
-					LEFT JOIN {db_prefix}members AS m ON (m.id_member = t.id_member)
-					WHERE t.can_update = {int:can_update}
-					ORDER BY m.real_name ASC
-			',
-			array(
-				'lang' => $lang['id_language'],
-				'can_update' => 1
-			)
-		);
 
 		// This is what this script is all about: showing translators
 		while($translator = $smcFunc['db_fetch_row']($query_translators))
@@ -73,4 +64,3 @@ echo '
 
 // And the footer
 template_footer();
-?>
