@@ -44,14 +44,20 @@ $query_languages = $smcFunc['db_query']('', '
 );
 
 	// Walk through the results
-	while($lang = $smcFunc['db_fetch_row']($query_languages)) {
-
+	$languages = array();
+	while ($lang = $smcFunc['db_fetch_row']($query_languages))
+	{
+		if (!isset($languages[$lang['name']]))
+			$languages[$lang['name']] = array();
+		$languages[$lang['name']][] = $row;
+	}
+		
+	foreach ($languages as $key => $translators)
+	{
 		// Show the name of the language.
 		echo '
-				<br /><strong>' . $lang['name'] . '</strong><br />';
-
-		// This is what this script is all about: showing translators
-		while($translator = $smcFunc['db_fetch_row']($query_translators))
+				<br /><strong>' . $key . '</strong><br />';
+		foreach ($translators as $translator)
 			echo '
 					' . $translator['real_name'] . '<br />';
 	}
@@ -65,3 +71,4 @@ echo '
 // And the footer
 template_footer();
 ?>
+
